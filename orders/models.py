@@ -26,10 +26,9 @@ class Order(models.Model):
         if not self.user:
             raise ValueError("User must be set before saving the Order.")
         
-        if not self.pk:  # If it's a new Order being created
-            super().save(*args, **kwargs)  # Save the order first to generate an ID
+        if not self.pk: 
+            super().save(*args, **kwargs)  
             
-            # Rest of the logic remains the same...
         else:
             super().save(*args, **kwargs)
 
