@@ -17,3 +17,10 @@ This project is structured to include the following functionalities:
 - **User Management:** View registered users, deactivate or delete user accounts.
 - **Category Management:** Manage product categories.
 - **Email Notifications:** Send custom email notifications to users (order updates, promotional emails).
+
+## Project Structure
+### Apps
+- **Users:** Manages user-related functionalities (registration, login, authentication).
+- **Products:** Handles product-related functionalities (listing, management).
+- **Cart:** Handles addition of products to shopping cart and displays individual and the total price.
+- **Orders:** Manages order creation and management.
