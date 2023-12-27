@@ -14,5 +14,4 @@ urlpatterns = [
     path('admin/userlist/', user_list.as_view(), name='user-list'),
     path('admin/users/<int:user_id>/', user_detail.as_view(), name='user-detail'),
     path('admin/send_custom_email/', send_custom_email, name='send-custom_email' ),
-    # Other URLs for user-related operations (profile update, etc.) can be added here
 ]
