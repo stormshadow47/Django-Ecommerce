@@ -23,7 +23,7 @@ class OrderCreateView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         
-        cart = Cart.objects.filter(user=user).first()  # Fetch the user's cart
+        cart = Cart.objects.filter(user=user).first()  
         
         # Check if the cart exists
         if cart:
@@ -38,10 +38,10 @@ class OrderCreateView(CreateAPIView):
 
                 # Add associated products from cart items to the order
                 for cart_item in cart_items:
-                    product = cart_item.product  # Assuming 'product' is the related field in CartItem
-                    item_price = product.price  # Fetch price from the related product
+                    product = cart_item.product 
+                    item_price = product.price  
                     order_item = OrderItem.objects.create(order=order, product=product, quantity=cart_item.quantity, price=item_price)
-                    order.items.add(product)  # Add the product to the order
+                    order.items.add(product)  
                     
                     # Decrease product quantity upon placing the order
                     product.quantity -= cart_item.quantity
@@ -63,7 +63,7 @@ class OrderCreateView(CreateAPIView):
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
                 
-                # Delete items from the cart after placing the order
+                # Delete items from the cart after placing the orde
                 cart_items.delete()
 
                 return Response(order_serializer.data)
@@ -76,26 +76,26 @@ class OrderHistoryView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Retrieve orders for the authenticated user
+    
         return Order.objects.filter(user=self.request.user)
 
 class OrderListView(generics.ListAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [IsAuthenticated]  # Only admins can view all orders
+
 
 class OrderDetailView(generics.RetrieveAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [AdminPermission]  # Only admins can view order details
+    
 
 class OrderStatusUpdateView(generics.UpdateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [AdminPermission]  # Only admins can update order status
+
     
     def put(self, request, *args, **kwargs):
         order = self.get_object()
@@ -109,16 +109,16 @@ class OrderStatusUpdateView(generics.UpdateAPIView):
             # Send email notification if status changes
             if old_status != new_status:
                 subject = f"Order Status Update: {new_status}"
-                from_email = "nithin.raj101@outlook.com"  # Replace with your email
-                to_email = order.user.email  # Assuming 'Order' model has a 'user' field
+                from_email = "nithin.raj101@outlook.com"  
+                to_email = order.user.email  
 
                 # Render HTML template for email
                 html_content = render_to_string('order_status_update_email.html', {
                     'new_status': new_status,
-                    'order_id': order.id  # Pass other needed data to the template
+                    'order_id': order.id  
                 })
 
-                text_content = strip_tags(html_content)  # Strip HTML tags for plain text email
+                text_content = strip_tags(html_content)  
 
                 email = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
                 email.attach_alternative(html_content, "text/html")
