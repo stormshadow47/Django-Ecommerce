@@ -53,12 +53,17 @@ http://localhost:8000/admin/
 # API Endpoints
 
 ## Project Level:
-- '/api/users/' : User-related endpoints (registration, login, profile).
-- '/api/products/' : Product-related endpoints (listing, details, creation).
-- '/api/orders/' : Order-related endpoints (creation, listing, details, status update).
-
-
+- 'api/users/' : User-related endpoints (registration, login, profile).
+- 'api/products/' : Product-related endpoints (listing, details, creation).
+- 'api/cart/' : Endpoints for cart-related functionalities(Adding products to cart, total price and checkout).
+- 'api/orders/' : Order-related endpoints (creation, listing, details, status update).
+  
+## App Level:
 ### Users:
 - **Admin:**
-- 
+- 'admin/login/'
+- 'admin/logout/'
+- 'admin/userlist/'
+- 'admin/users/<int:user_id>/'
+- 'admin/send_custom_email/'
 
