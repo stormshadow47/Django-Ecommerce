@@ -32,3 +32,7 @@ git clone https://github.com/stormshadow47/Django-Ecommerce.git
 cd ecom_project
 pip install -r requirements.txt
 ```
+1. **Running the server**: Run the Django development server.
+```
+python manage.py runserver
+```
