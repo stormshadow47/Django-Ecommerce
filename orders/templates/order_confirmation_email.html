@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation</title>
+    <style>
+        /* Add your email styles here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .order-details {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        /* Other styles as needed */
+    </style>
+</head>
+<body>
+    <h2>Order Confirmation</h2>
+    <p>Thank you for your order! Here are the details:</p>
+    
+    <div class="order-details">
+        <p><strong>Order ID:</strong> {{ order.id }}</p>
+        <p><strong>User:</strong> {{ order.user }}</p>
+        <p><strong>Total Price:</strong> ₹{{ order.total_price }}</p>
+
+        <!-- Display order items -->
+        <ul>
+            {% for item in order_items %}
+                <li>
+                    <p><strong>Product Name:</strong> {{ items.product_name }}</p>
+                    <p><strong>Quantity:</strong> {{ items.quantity }}</p>
+                    <p><strong>Price:</strong> ₹{{ items.price }}</p>
+                    <!-- Add more item details here if needed -->
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <p>We appreciate your business. If you have any questions, feel free to contact us.</p>
+    
+    <!-- Add your contact information or other content here -->
+</body>
+</html>
