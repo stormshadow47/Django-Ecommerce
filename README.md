@@ -32,7 +32,7 @@ git clone https://github.com/stormshadow47/Django-Ecommerce.git
 cd ecom_project
 pip install -r requirements.txt
 ```
-2. ** Enter Virtual Environment inside the project:**
+2. **Enter Virtual Environment inside the project:**
 
 
 ```
