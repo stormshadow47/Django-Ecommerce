@@ -46,25 +46,25 @@ class ProductDetailView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [BuyerPermission]  # Only authenticated users can view product details
+    
 
 class ProductCreateView(generics.CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [AdminPermission]  # Only admins can create new products
+
 
 class ProductUpdateView(generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [AdminPermission]  # Only admins can update products
+    
 
 class ProductDeleteView(generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [AdminPermission]
+    
 
 class ReviewList(APIView):
     def get(self, request, product_id, format=None):
@@ -92,22 +92,22 @@ class ProductCategoryListView(generics.ListAPIView):
     queryset = ProductCategory.objects.all()
     serializer_class = ProductCategorySerializer
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [AdminPermission]  # Ensure only admins can view categories
+    
 
 class ProductCategoryCreateView(generics.CreateAPIView):
     queryset = ProductCategory.objects.all()
     serializer_class = ProductCategorySerializer
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [AdminPermission]  # Ensure only admins can create categories
+    
 
 class ProductCategoryUpdateView(generics.UpdateAPIView):
     queryset = ProductCategory.objects.all()
     serializer_class = ProductCategorySerializer
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [AdminPermission]  # Ensure only admins can update categories
+
 
 class ProductCategoryDeleteView(generics.DestroyAPIView):
     queryset = ProductCategory.objects.all()
     serializer_class = ProductCategorySerializer
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [AdminPermission]
+
