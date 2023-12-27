@@ -13,5 +13,4 @@ urlpatterns = [
     path('categories/create/', ProductCategoryCreateView.as_view(), name='category-create'),
     path('categories/<int:pk>/', ProductCategoryUpdateView.as_view(), name='category-update'),
     path('categories/<int:pk>/delete/', ProductCategoryDeleteView.as_view(), name='category-delete'),
-    # Add additional URL patterns for filtering if needed
 ]
