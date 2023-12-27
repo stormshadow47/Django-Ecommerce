@@ -26,7 +26,7 @@ This project is structured to include the following functionalities:
 - **Orders:** Manages order creation and management.
 
 ## Usage
-1. **Installation: Clone the repository and install the required dependencies.
+1. **Installation**: Clone the repository and install the required dependencies.
 ```
 git clone https://github.com/stormshadow47/Django-Ecommerce.git
 cd ecom_project
