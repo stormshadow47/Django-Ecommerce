@@ -5,6 +5,6 @@ A Django-based ECommerce platform designed for easy setup, user management, prod
 This project is structured to include the following functionalities:
 
 ### User Functionalities:
-- **User Authentication: Users can register, log in, and manage their accounts.**
-- **Product Listing: Browse and view available products.**
+- **User Authentication:** Users can register, log in, and manage their accounts.
+- **Product Listing:** Browse and view available products.
 
