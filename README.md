@@ -44,3 +44,9 @@ pip install -r requirements.txt
 ```
 python manage.py runserver
 ```
+
+4. **Admin Dashboard:** Access the admin dashboard using your browser.
+```
+URL: http://localhost:8000/admin/
+Use admin credentials for authentication.
+```
