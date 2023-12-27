@@ -52,7 +52,10 @@ http://localhost:8000/admin/
 
 # API Endpoints
 
-## Project Level
+## Project Level:
+- '/api/users/' : User-related endpoints (registration, login, profile).
+- '/api/products/' : Product-related endpoints (listing, details, creation).
+- '/api/orders/' : Order-related endpoints (creation, listing, details, status update).
 
 
 ### Users:
