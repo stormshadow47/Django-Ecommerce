@@ -50,7 +50,7 @@ python manage.py runserver
 http://localhost:8000/admin/
 ```
 
-### API Endpoints
+# API Endpoints
 
 ## Project Level
 
