@@ -7,7 +7,7 @@ from Products.models import ProductCategory
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = '__all__'  # Include all fields for CRUD operations
+        fields = '__all__' 
 
 
 class ReviewSerializer(serializers.ModelSerializer):
