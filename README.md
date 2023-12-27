@@ -24,3 +24,11 @@ This project is structured to include the following functionalities:
 - **Products:** Handles product-related functionalities (listing, management).
 - **Cart:** Handles addition of products to shopping cart and displays individual and the total price.
 - **Orders:** Manages order creation and management.
+
+## Usage
+1. **Installation: Clone the repository and install the required dependencies.
+   ```
+git clone https://github.com/stormshadow47/Django-Ecommerce.git
+git add
+git commit
+```
