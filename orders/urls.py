@@ -7,5 +7,4 @@ urlpatterns = [
     path('listview/', OrderListView.as_view(), name='order-list'),
     path('detailview/<int:pk>/', OrderDetailView.as_view(), name='order-detail'),
     path('status/<int:pk>/update/', OrderStatusUpdateView.as_view(), name='order-status-update'),
-    # Other URL patterns...
 ]
