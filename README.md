@@ -29,6 +29,6 @@ This project is structured to include the following functionalities:
 1. **Installation: Clone the repository and install the required dependencies.
 ```
 git clone https://github.com/stormshadow47/Django-Ecommerce.git
-git add
-git commit
+cd ecom_project
+pip install -r requirements.txt
 ```
