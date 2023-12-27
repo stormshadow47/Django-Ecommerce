@@ -35,12 +35,12 @@ def register_user(request):
         send_mail(
             'Welcome to Our Platform',
             'Thank you for registering!',
-            'nithin.raj101@outlook.com',  # Replace with your email sender
-            [email],  # Email address of the user
+            'nithin.raj101@outlook.com',  
+            [email],  
             fail_silently=False,
         )
         
-        # Create UserProfile (or any additional profile data)
+        # Create UserProfile 
         profile = UserProfile.objects.create(user=user)
         
         return Response({'message': 'Registration successful. Welcome email sent.'}, status=201)
@@ -98,7 +98,7 @@ def password_reset_request(request):
     # Compose the email content
     subject = 'Password Reset Request'
     message = f'Please use the following link to reset your password: {reset_url}'
-    from_email = 'nithin.raj101@outlook.com'  # Replace with your email address
+    from_email = 'nithin.raj101@outlook.com'  
     
     # Send the email
     send_mail(subject, message, from_email, [email])
@@ -161,7 +161,6 @@ def admin_login(request):
     
 
 @api_view(['POST'])
-#@permission_classes([IsAuthenticated])
 def admin_logout(request):
     try:
         refresh_token = request.data["refresh_token"]
@@ -173,13 +172,11 @@ def admin_logout(request):
     
 class user_list(generics.ListAPIView):
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [IsAuthenticated, IsAdminUser]
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
 
 class user_detail(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [UserProfileAuthBackend, SessionAuthentication]
-    #permission_classes = [IsAuthenticated, IsAdminUser]
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
 
@@ -207,7 +204,7 @@ def send_custom_email(request):
         send_mail(
             subject,
             plain_text_message,
-            'nithin.raj101@outlook.com',  # Replace with your sender email
+            'nithin.raj101@outlook.com',  
             recipient_list,
             html_message=html_message,
         )
