@@ -109,6 +109,8 @@ http://localhost:8000/admin/
 - 'history/' (User list order history)
 
 ## Technologies Used
+- Python 3: Python programming language.
 - Django: Backend web framework.
 - Django Rest Framework (DRF): API development.
 - JWT Authentication: Token-based authentication.
+- Postman: API Testing.
