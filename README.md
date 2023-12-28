@@ -61,10 +61,16 @@ http://localhost:8000/admin/
 ## App Level:
 ### Users:
  **Admin:**
-- 'admin/login/'
-- 'admin/logout/'
-- 'admin/userlist/'
-- 'admin/users/<int:user_id>/'
-- 'admin/send_custom_email/'
+- 'admin/login/' (Admin login)
+- 'admin/logout/' (Admin logout)
+- 'admin/userlist/' (Admin display user list)
+- 'admin/users/<int:user_id>/' (Admin display individual user detail)
+- 'admin/send_custom_email/' (Admin send custom emails: order updates, promotions)
 
-**
+**User:**
+- 'register/' (User account registration)
+- 'login/' (User login)
+- 'logout/' (user logout)
+- 'password_reset/' (User password reset request)
+- 'password_reset_confirm/<uidb64>/<token>/' (User password reset confirm)
+- 'set_new_password/<uidb64>/<token>/' (User set new password)
