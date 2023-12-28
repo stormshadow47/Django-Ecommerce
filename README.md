@@ -75,12 +75,12 @@ http://localhost:8000/admin/
 - 'password_reset_confirm/uidb64/token/' (User password reset confirm)
 - 'set_new_password/uidb64/token/' (User set new password)
 
-  ### Products:
-  **Admin:**
-  - 'create/'(Admin create products)
-  - '<int:pk>/update/'(Admin update product details)
-  - '<int:pk>/delete/'(Admin delete product details)
-  - 'categories/' (Admin product category list view)
-  - 'categories/create/' (Admin create product category)
-  - 'categories/<int:pk>/' (Admin update product category)
-  - 'categories/<int:pk>/delete/' (Admin delete product category)
+### Products:
+**Admin:**
+- 'create/'(Admin create products)
+- '<int:pk>/update/'(Admin update product details)
+- '<int:pk>/delete/'(Admin delete product details)
+- 'categories/' (Admin product category list view)
+- 'categories/create/' (Admin create product category)
+- 'categories/<int:pk>/' (Admin update product category)
+- 'categories/<int:pk>/delete/' (Admin delete product category)
