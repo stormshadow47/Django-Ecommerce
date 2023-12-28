@@ -72,5 +72,5 @@ http://localhost:8000/admin/
 - 'login/' (User login)
 - 'logout/' (user logout)
 - 'password_reset/' (User password reset request)
-- 'password_reset_confirm/<uidb64>/<token>/' (User password reset confirm)
-- 'set_new_password/<uidb64>/<token>/' (User set new password)
+- 'password_reset_confirm/uidb64/token/' (User password reset confirm)
+- 'set_new_password/uidb64/token/' (User set new password)
