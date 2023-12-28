@@ -60,10 +60,11 @@ http://localhost:8000/admin/
   
 ## App Level:
 ### Users:
-- **Admin:**
+ **Admin:**
 - 'admin/login/'
 - 'admin/logout/'
 - 'admin/userlist/'
 - 'admin/users/<int:user_id>/'
 - 'admin/send_custom_email/'
 
+**
