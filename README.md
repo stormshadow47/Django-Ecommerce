@@ -84,3 +84,9 @@ http://localhost:8000/admin/
 - 'categories/create/' (Admin create product category)
 - 'categories/<int:pk>/' (Admin update product category)
 - 'categories/<int:pk>/delete/' (Admin delete product category)
+
+**User:**
+- 'listview/' (User proudct list view)
+- '<int:pk>/' (User product detail view)
+- '<int:product_id>/reviews/' (User product review list)
+- 'reviews/<int:review_id>/ (User product review detail)
