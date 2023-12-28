@@ -90,3 +90,10 @@ http://localhost:8000/admin/
 - '<int:pk>/' (User product detail view)
 - '<int:product_id>/reviews/' (User product review list)
 - 'reviews/<int:review_id>/ (User product review detail)
+
+## Cart:
+**User:**
+- 'view/<int:pk>/' (User cart list view)
+- 'item/add/' (User add product to cart)
+- 'item/update/<int:pk>/' (User update product in cart. example: quantity)
+- 'delete/<int:pk>/' (User delete product from cart)
