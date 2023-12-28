@@ -77,9 +77,9 @@ http://localhost:8000/admin/
 
 ### Products:
 **Admin:**
-- 'create/'(Admin create products)
-- '<int:pk>/update/'(Admin update product details)
-- '<int:pk>/delete/'(Admin delete product details)
+- 'create/' (Admin create products)
+- '<int:pk>/update/' (Admin update product details)
+- '<int:pk>/delete/' (Admin delete product details)
 - 'categories/' (Admin product category list view)
 - 'categories/create/' (Admin create product category)
 - 'categories/<int:pk>/' (Admin update product category)
