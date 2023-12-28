@@ -97,3 +97,13 @@ http://localhost:8000/admin/
 - 'item/add/' (User add product to cart)
 - 'item/update/<int:pk>/' (User update product in cart. example: quantity)
 - 'delete/<int:pk>/' (User delete product from cart)
+
+## Order:
+**Admin:**
+- 'listview/', (Admin list order history)
+- 'detailview/<int:pk>/', (Admin list individiual order)
+- 'status/<int:pk>/update/' (Admin update order status )
+
+**User:**
+- 'create/' (User place order)
+- 'history/' (User list order history)
