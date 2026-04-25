@@ -1,2 +1,5 @@
 # Ignore mailtrap.env file
 mailtrap.env
+/venv
+__pycache__
+.env
