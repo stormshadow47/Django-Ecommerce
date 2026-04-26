@@ -17,14 +17,14 @@ pipeline {
         stage('Install pip') {
             steps {
                 sh 'curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py'
-                sh 'python3 get-pip.py --user'
+                sh 'python3 get-pip.py --break-system-packages'
             }
         }
 
         stage('Set up Dependencies') {
             steps {
-                sh 'pip install --upgrade pip'
-                sh 'pip install -r requirements.txt'
+                sh 'pip install --upgrade pip --break-system-packages'
+                sh 'pip install -r requirements.txt --break-system-packages'
             }
         }
 
