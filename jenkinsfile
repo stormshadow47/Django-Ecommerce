@@ -16,38 +16,38 @@ pipeline {
 
         stage('Set up VENV') {
             steps {
-                sh 'python -m venv venv'
+                sh 'python3 -m venv venv'
                 sh 'source venv/bin/activate'
-                sh 'python -m pip install --upgrade pip'
-                sh 'python -m pip install -r requirements.txt'
+                sh 'python3 -m pip install --upgrade pip'
+                sh 'python3 -m pip install -r requirements.txt'
             }
         }
 
         stage('Run smoke tests') {
             steps {
                 sh 'source venv/bin/activate'
-                sh 'python manage.py test smoke_tests'
+                sh 'python3 manage.py test smoke_tests'
             }
         }
 
         stage('Run unit tests') {
             steps {
                 sh 'source venv/bin/activate'
-                sh 'python manage.py test Users.unit_tests Products.unit_tests cart.unit_tests orders.unit_tests'
+                sh 'python3 manage.py test Users.unit_tests Products.unit_tests cart.unit_tests orders.unit_tests'
             }
         }
 
         stage('Run integration tests') {
             steps {
                 sh 'source venv/bin/activate'
-                sh 'python manage.py test Users.tests Products.tests cart.tests orders.tests'
+                sh 'python3 manage.py test Users.tests Products.tests cart.tests orders.tests'
             }
         }
 
         stage('Run all tests') {
             steps {
                 sh 'source venv/bin/activate'
-                sh 'python manage.py test'
+                sh 'python3 manage.py test'
             }
         }
     }
