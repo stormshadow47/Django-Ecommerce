@@ -2,22 +2,14 @@ pipeline {
     agent any
     environment {
         PATH = "${HOME}/.local/bin:${env.PATH}"
-        DB_HOST = 'localhost'
-        DB_NAME = 'ecom'
-        DB_USER = 'root'
-        DB_PASSWORD = 'root'
+        DJANGO_SETTINGS_MODULE = 'ecom_project.settings'
+        DB_ENGINE = 'django.db.backends.sqlite3'
+        DB_NAME = 'db.sqlite3'
     }
     stages {
         stage('Git Checkout') {
             steps {
                 git branch: 'master', url: 'https://github.com/stormshadow47/Django-Ecommerce.git'
-            }
-        }
-
-        stage('Install System Dependencies') {
-            steps {
-                sh 'sudo apt-get update'
-                sh 'sudo apt-get install -y default-libmysqlclient-dev pkg-config gcc g++ make'
             }
         }
 
