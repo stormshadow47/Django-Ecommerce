@@ -5,7 +5,7 @@ pipeline {
         DJANGO_SETTINGS_MODULE = 'ecom_project.settings'
         DB_ENGINE = 'django.db.backends.sqlite3'
         DB_NAME = 'db.sqlite3'
-        DOCKER_IMAGE = 'stormshadow47/django-ecommerce'
+        DOCKER_IMAGE = 'nithin058/django-ecommerce'
         DOCKER_TAG = "${env.BUILD_NUMBER}"
     }
     stages {
