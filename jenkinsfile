@@ -5,6 +5,8 @@ pipeline {
         DJANGO_SETTINGS_MODULE = 'ecom_project.settings'
         DB_ENGINE = 'django.db.backends.sqlite3'
         DB_NAME = 'db.sqlite3'
+        DOCKER_IMAGE = 'stormshadow47/django-ecommerce'
+        DOCKER_TAG = "${env.BUILD_NUMBER}"
     }
     stages {
         stage('Git Checkout') {
@@ -48,6 +50,24 @@ pipeline {
         stage('Run all tests') {
             steps {
                 sh 'python3 manage.py test'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh "docker push ${DOCKER_IMAGE}:latest"
+                    sh "docker logout"
+                }
             }
         }
     }
