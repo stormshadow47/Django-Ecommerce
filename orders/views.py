@@ -19,6 +19,7 @@ from Users.backends import UserProfileAuthBackend
 class OrderCreateView(CreateAPIView):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication]
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -63,8 +64,13 @@ class OrderCreateView(CreateAPIView):
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
                 
-                # Delete items from the cart after placing the orde
+                # Delete items from the cart after placing the order
                 cart_items.delete()
+
+                # Return HTML for htmx requests
+                if request.headers.get('HX-Request'):
+                    from django.http import HttpResponse
+                    return HttpResponse(status=200, headers={'HX-Redirect': f'/order/confirmation/{order.id}/'})
 
                 return Response(order_serializer.data)
 
@@ -74,6 +80,7 @@ class OrderCreateView(CreateAPIView):
 class OrderHistoryView(ListAPIView):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication]
 
     def get_queryset(self):
     

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <h2 style="text-align: center; margin-bottom: 1.5rem;">Register</h2>
+    
+    <form 
+        id="register-form"
+        hx-post="/api/users/register/" 
+        hx-target="#register-message"
+        hx-swap="innerHTML"
+    >
+        <div style="margin-bottom: 1rem;">
+            <label for="username">Username:</label>
+            <input 
+                type="text" 
+                id="username" 
+                name="username" 
+                required
+                style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; border: 1px solid #ddd; border-radius: 4px;"
+            >
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <label for="email">Email:</label>
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                required
+                style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; border: 1px solid #ddd; border-radius: 4px;"
+            >
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <label for="password">Password:</label>
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                required
+                style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; border: 1px solid #ddd; border-radius: 4px;"
+            >
+        </div>
+        
+        <button 
+            type="submit" 
+            class="btn"
+            style="width: 100%; margin-top: 1rem;"
+        >
+            Register
+        </button>
+    </form>
+    
+    <div id="register-message" style="margin-top: 1rem;"></div>
+    
+    <p style="text-align: center; margin-top: 1rem;">
+        Already have an account? <a href="/login/">Login</a>
+    </p>
+</div>
+{% endblock %}

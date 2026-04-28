@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Shopping Cart</h2>
+
+<div id="cart-container">
+    {% if cart.items.exists %}
+    <div class="cart-items">
+        {% for item in cart.items.all %}
+        <div class="cart-item" style="background: white; padding: 1rem; margin: 1rem 0; border-radius: 8px; display: flex; gap: 1rem; align-items: center;">
+            {% if item.product.image %}
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+            {% else %}
+            <div style="width: 100px; height: 100px; background: #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                No Image
+            </div>
+            {% endif %}
+            <div style="flex: 1;">
+                <h3>{{ item.product.name }}</h3>
+                <p class="price">${{ item.product.price }}</p>
+                <p>Quantity: {{ item.quantity }}</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <button 
+                    class="btn"
+                    hx-put="/api/cart/item/update/{{ item.id }}/"
+                    hx-vals='{"quantity": {{ item.quantity|add:1 }}}'
+                    hx-target="#cart-container"
+                    hx-swap="outerHTML"
+                >
+                    +
+                </button>
+                <button 
+                    class="btn"
+                    hx-put="/api/cart/item/update/{{ item.id }}/"
+                    hx-vals='{"quantity": {{ item.quantity|add:-1 }}}'
+                    hx-target="#cart-container"
+                    hx-swap="outerHTML"
+                >
+                    -
+                </button>
+                <button 
+                    class="btn"
+                    style="background-color: #dc3545;"
+                    hx-delete="/api/cart/delete/{{ item.id }}/"
+                    hx-target="#cart-container"
+                    hx-swap="outerHTML"
+                >
+                    Remove
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div style="background: white; padding: 1rem; margin: 2rem 0; border-radius: 8px;">
+        <h3>Total: ${{ cart.total_price }}</h3>
+        <button 
+            class="btn"
+            hx-post="/api/order/create/"
+            hx-target="#order-message"
+            hx-swap="innerHTML"
+            style="margin-top: 1rem; font-size: 1.2rem; padding: 0.75rem 1.5rem;"
+        >
+            Checkout
+        </button>
+        <div id="order-message" style="margin-top: 1rem;"></div>
+    </div>
+    {% else %}
+    <p style="text-align: center; padding: 2rem;">Your cart is empty.</p>
+    <a href="/products/" class="btn" style="display: block; text-align: center; width: 200px; margin: 0 auto;">Browse Products</a>
+    {% endif %}
+</div>
+{% endblock %}

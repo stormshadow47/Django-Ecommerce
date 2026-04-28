@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="product-detail">
+    <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; border-radius: 8px;">
+            {% else %}
+            <div style="width: 100%; height: 400px; background: #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                No Image
+            </div>
+            {% endif %}
+        </div>
+        <div style="flex: 1; min-width: 300px;">
+            <h1>{{ product.name }}</h1>
+            <p class="price" style="font-size: 2rem; margin: 1rem 0;">${{ product.price }}</p>
+            <p>{{ product.description }}</p>
+            <p><strong>Quantity Available:</strong> {{ product.quantity }}</p>
+            
+            {% if product.categories.all %}
+            <p><strong>Categories:</strong>
+                {% for category in product.categories.all %}
+                    {{ category.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            {% endif %}
+            
+            <div style="margin-top: 2rem;">
+                <label for="quantity">Quantity:</label>
+                <input 
+                    type="number" 
+                    id="quantity" 
+                    name="quantity" 
+                    value="1" 
+                    min="1" 
+                    max="{{ product.quantity }}"
+                    style="padding: 0.5rem; width: 80px; margin-left: 1rem; border: 1px solid #ddd; border-radius: 4px;"
+                >
+            </div>
+            
+            <div style="margin-top: 1rem;">
+                <button 
+                    class="btn"
+                    hx-post="/api/cart/item/add/"
+                    hx-vals='{"product_id": {{ product.id }}, "quantity": 1}'
+                    hx-target="#cart-count"
+                    hx-swap="outerHTML"
+                    style="font-size: 1.2rem; padding: 0.75rem 1.5rem;"
+                >
+                    Add to Cart
+                </button>
+            </div>
+            
+            <div id="add-to-cart-message" style="margin-top: 1rem; color: green; display: none;">
+                Added to cart!
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 3rem;">
+        <h2>Reviews</h2>
+        <div id="reviews-container">
+            {% for review in reviews %}
+            <div style="background: white; padding: 1rem; margin: 1rem 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <strong>User {{ review.user.id }}</strong>
+                    <span>Rating: {{ review.rating }}/5</span>
+                </div>
+                <p>{{ review.comment }}</p>
+                <small>{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+            {% empty %}
+            <p>No reviews yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

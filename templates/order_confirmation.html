@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+    <h2>Order Placed Successfully!</h2>
+    <p style="margin: 1rem 0; color: #28a745; font-size: 1.2rem;">Thank you for your purchase.</p>
+    
+    <div style="text-align: left; margin: 2rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+        <h3>Order Summary</h3>
+        <p><strong>Order ID:</strong> #{{ order.id }}</p>
+        <p><strong>Date:</strong> {{ order.created_at|date:"F d, Y H:i" }}</p>
+        
+        <table style="width: 100%; margin-top: 1rem; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <th style="text-align: left; padding: 0.5rem;">Product</th>
+                    <th style="text-align: center; padding: 0.5rem;">Quantity</th>
+                    <th style="text-align: right; padding: 0.5rem;">Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order_items %}
+                <tr>
+                    <td style="padding: 0.5rem;">{{ item.product.name }}</td>
+                    <td style="text-align: center; padding: 0.5rem;">{{ item.quantity }}</td>
+                    <td style="text-align: right; padding: 0.5rem;">${{ item.price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div style="border-top: 2px solid #333; margin-top: 1rem; padding-top: 1rem; text-align: right;">
+            <h3>Total: ${{ order.total_price }}</h3>
+        </div>
+    </div>
+    
+    <a href="/products/" class="btn" style="display: inline-block; margin-top: 1rem;">Continue Shopping</a>
+</div>
+{% endblock %}

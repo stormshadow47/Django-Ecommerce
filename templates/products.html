@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Products</h2>
+<div class="search-bar" style="margin: 1rem 0;">
+    <input 
+        type="text" 
+        id="search-input"
+        name="q"
+        placeholder="Search products..." 
+        hx-get="/api/products/search/" 
+        hx-trigger="keyup changed delay:500ms"
+        hx-target="#products-container"
+        hx-indicator="#loading"
+        style="padding: 0.5rem; width: 100%; max-width: 400px; border: 1px solid #ddd; border-radius: 4px;"
+    >
+</div>
+
+<div id="loading" class="loading" style="display: none;">Searching</div>
+
+<div id="products-container" class="products-grid">
+    {% for product in products %}
+    <div class="product-card">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+        <div style="width: 100%; height: 200px; background: #ddd; display: flex; align-items: center; justify-content: center;">
+            No Image
+        </div>
+        {% endif %}
+        <div class="product-card-body">
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description|truncatewords:20 }}</p>
+            <div class="price">${{ product.price }}</div>
+            <div style="margin-top: 1rem;">
+                <a href="/products/{{ product.id }}/" class="btn">View Details</a>
+                <button 
+                    class="btn"
+                    hx-post="/api/cart/item/add/"
+                    hx-vals='{"product_id": {{ product.id }}, "quantity": 1}'
+                    hx-target="#cart-count"
+                    hx-swap="outerHTML"
+                >
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

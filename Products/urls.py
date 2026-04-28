@@ -1,5 +1,6 @@
 from django.urls import path
 from Products.views import ProductListView, ProductDetailView,ProductCreateView,ProductUpdateView,ProductDeleteView, ReviewList, ProductCategoryListView,ProductCategoryCreateView,ProductCategoryUpdateView,ProductCategoryDeleteView
+from ecom_project import frontend_views
 
 urlpatterns = [
     path('listview/', ProductListView.as_view(), name='product-list'),
@@ -13,4 +14,5 @@ urlpatterns = [
     path('categories/create/', ProductCategoryCreateView.as_view(), name='category-create'),
     path('categories/<int:pk>/', ProductCategoryUpdateView.as_view(), name='category-update'),
     path('categories/<int:pk>/delete/', ProductCategoryDeleteView.as_view(), name='category-delete'),
+    path('search/', frontend_views.search_products, name='search-products'),
 ]

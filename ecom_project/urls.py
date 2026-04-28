@@ -16,9 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from ecom_project import frontend_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', frontend_views.home, name='home'),
+    path('products/', frontend_views.products_list, name='products'),
+    path('products/<int:product_id>/', frontend_views.product_detail, name='product_detail'),
+    path('cart/', frontend_views.cart_page, name='cart'),
+    path('cart/count/', frontend_views.cart_count_partial, name='cart-count'),
+    path('order/confirmation/<int:order_id>/', frontend_views.order_confirmation, name='order-confirmation'),
+    path('login/', frontend_views.login_page, name='login'),
+    path('register/', frontend_views.register_page, name='register'),
+    path('logout/', frontend_views.logout_view, name='logout'),
     path('api/users/', include('Users.urls')),
     path('api/products/', include('Products.urls')),
     path('api/cart/', include('cart.urls')),

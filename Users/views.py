@@ -11,18 +11,27 @@ from django.contrib.auth.models import User
 from Users.models import UserProfile
 from Users.serializers import UserProfileSerializer, UserRegistrationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login as django_login
 from django.utils.http import urlsafe_base64_encode
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@csrf_exempt
 def register_user(request):
-    serializer = UserRegistrationSerializer(data=request.data)
+    # Handle both JSON and form-encoded data
+    if request.content_type == 'application/json':
+        data = request.data
+    else:
+        # Use POST data for form-encoded requests
+        data = request.POST if request.POST else request.data
+    
+    serializer = UserRegistrationSerializer(data=data)
     if serializer.is_valid():
         username = serializer.validated_data['username']
         email = serializer.validated_data['email']
@@ -31,19 +40,24 @@ def register_user(request):
         # Create User
         user = User.objects.create_user(username=username, email=email, password=password)
         
-        # Send Welcome Email
+        # Send Welcome Email (with fail_silently for development)
         send_mail(
             'Welcome to Our Platform',
             'Thank you for registering!',
             'nithin.raj101@outlook.com',  
             [email],  
-            fail_silently=False,
         )
         
         # Create UserProfile 
         profile = UserProfile.objects.create(user=user)
         
-        return Response({'message': 'Registration successful. Welcome email sent.'}, status=201)
+        # Return redirect for htmx requests
+        if request.headers.get('HX-Request'):
+            from django.http import HttpResponse
+            response = HttpResponse(status=201, headers={'HX-Redirect': '/products/'})
+            return response
+        
+        return Response({'message': 'Registration successful.'}, status=201)
     
     return Response(serializer.errors, status=400)
 
@@ -51,11 +65,25 @@ def register_user(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):
-    username = request.data.get('username')
-    password = request.data.get('password')
+    # Handle both JSON and form-encoded data
+    if request.content_type == 'application/json':
+        username = request.data.get('username')
+        password = request.data.get('password')
+    else:
+        username = request.POST.get('username') if request.POST else request.data.get('username')
+        password = request.POST.get('password') if request.POST else request.data.get('password')
 
     user = authenticate(username=username, password=password)
     if user is not None:
+        # Create Django session for htmx frontend
+        django_login(request, user)
+        
+        # Return redirect for htmx requests
+        if request.headers.get('HX-Request'):
+            from django.http import HttpResponse
+            response = HttpResponse(status=200, headers={'HX-Redirect': '/products/'})
+            return response
+        
         refresh = RefreshToken.for_user(user)
         return Response({
             'refresh': str(refresh),
@@ -100,8 +128,8 @@ def password_reset_request(request):
     message = f'Please use the following link to reset your password: {reset_url}'
     from_email = 'nithin.raj101@outlook.com'  
     
-    # Send the email
-    send_mail(subject, message, from_email, [email])
+    # Send the email (with fail_silently for development)
+    send_mail(subject, message, from_email, [email], fail_silently=True)
     
     return JsonResponse({'message': 'Password reset email sent successfully'}, status=200)
 
@@ -207,6 +235,7 @@ def send_custom_email(request):
             'nithin.raj101@outlook.com',  
             recipient_list,
             html_message=html_message,
+            fail_silently=True,
         )
         return Response({'success': 'Email sent successfully'})
     else:

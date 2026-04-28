@@ -1,0 +1,31 @@
+{% for product in products %}
+<div class="product-card">
+    {% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% else %}
+    <div style="width: 100%; height: 200px; background: #ddd; display: flex; align-items: center; justify-content: center;">
+        No Image
+    </div>
+    {% endif %}
+    <div class="product-card-body">
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description|truncatewords:20 }}</p>
+        <div class="price">${{ product.price }}</div>
+        <div style="margin-top: 1rem;">
+            <a href="/products/{{ product.id }}/" class="btn">View Details</a>
+            <button 
+                class="btn"
+                hx-post="/api/cart/item/add/"
+                hx-vals='{"product_id": {{ product.id }}, "quantity": 1}'
+                hx-target="#cart-count"
+                hx-swap="outerHTML"
+            >
+                Add to Cart
+            </button>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% if not products %}
+<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No products found.</p>
+{% endif %}
