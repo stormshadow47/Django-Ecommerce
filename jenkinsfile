@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent {label 'docker-agent'}
     environment {
         PATH = "${HOME}/.local/bin:${env.PATH}"
         DJANGO_SETTINGS_MODULE = 'ecom_project.settings'
