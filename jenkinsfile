@@ -1,55 +1,16 @@
 pipeline {
-    agent {label 'docker-agent'}
+    agent { label 'docker-agent' }
+
     environment {
-        PATH = "${HOME}/.local/bin:${env.PATH}"
-        DJANGO_SETTINGS_MODULE = 'ecom_project.settings'
-        DB_ENGINE = 'django.db.backends.sqlite3'
-        DB_NAME = 'db.sqlite3'
         DOCKER_IMAGE = 'nithin058/django-ecommerce'
         DOCKER_TAG = "${env.BUILD_NUMBER}"
     }
+
     stages {
-        stage('Git Checkout') {
+
+        stage('Checkout Code') {
             steps {
                 git branch: 'master', url: 'https://github.com/stormshadow47/Django-Ecommerce.git'
-            }
-        }
-
-        stage('Install pip') {
-            steps {
-                sh 'curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py'
-                sh 'python3 get-pip.py --break-system-packages'
-            }
-        }
-
-        stage('Set up Dependencies') {
-            steps {
-                sh 'pip install --upgrade pip --break-system-packages'
-                sh 'pip install -r requirements.txt --break-system-packages'
-            }
-        }
-
-        stage('Run smoke tests') {
-            steps {
-                sh 'python3 manage.py test smoke_tests'
-            }
-        }
-
-        stage('Run unit tests') {
-            steps {
-                sh 'python3 manage.py test Users.unit_tests Products.unit_tests cart.unit_tests orders.unit_tests'
-            }
-        }
-
-        stage('Run integration tests') {
-            steps {
-                sh 'python3 manage.py test Users.tests Products.tests cart.tests orders.tests'
-            }
-        }
-
-        stage('Run all tests') {
-            steps {
-                sh 'python3 manage.py test'
             }
         }
 
@@ -60,13 +21,28 @@ pipeline {
             }
         }
 
+        stage('Run Tests in Container') {
+            steps {
+                sh """
+                docker run --rm ${DOCKER_IMAGE}:${DOCKER_TAG} \
+                python manage.py test
+                """
+            }
+        }
+
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
-                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                    sh "docker push ${DOCKER_IMAGE}:latest"
-                    sh "docker logout"
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh """
+                    echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin
+                    docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    docker push ${DOCKER_IMAGE}:latest
+                    docker logout
+                    """
                 }
             }
         }
@@ -74,13 +50,13 @@ pipeline {
 
     post {
         always {
-            echo 'Test pipeline completed'
+            echo 'Pipeline completed'
         }
         success {
-            echo 'All tests passed successfully!'
+            echo 'Build, test, and push successful'
         }
         failure {
-            echo 'Tests failed. Please check the logs.'
+            echo 'Pipeline failed. Check logs.'
         }
     }
 }
