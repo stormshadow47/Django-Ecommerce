@@ -184,7 +184,7 @@ LOGGING = {
         "file": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": os.getenv('LOG_FILE', BASE_DIR / 'logs' / 'django.log'),
+            "filename": os.getenv("LOG_FILE", "/logs/django.log"),
             "formatter": "verbose",
         },
     },
