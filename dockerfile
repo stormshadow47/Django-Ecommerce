@@ -20,12 +20,19 @@ WORKDIR /app
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project
-COPY . /app/
+# Copy project files
+COPY . .
+
+# Security: Don't run as root
+RUN useradd -m myuser
+
+# Create logs directory with proper permissions
+RUN mkdir -p /app/logs && chown -R myuser:myuser /app/logs
+
+USER myuser
 
 # Expose port
 EXPOSE 8000
 
 # Run the application
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-
