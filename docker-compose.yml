@@ -3,6 +3,7 @@ version: '3.8'
 services:
   web:
     build: .
+    image: nithin058/django-ecommerce:latest
     container_name: django_app
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
