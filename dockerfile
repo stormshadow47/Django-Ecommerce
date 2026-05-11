@@ -23,13 +23,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . .
 
-# Security: Don't run as root
-RUN useradd -m myuser
-
-# Create logs directory with proper permissions
-RUN mkdir -p /app/logs && chown -R myuser:myuser /app/logs
-
-USER myuser
+# Create logs directory
+RUN mkdir -p /app/logs
 
 # Expose port
 EXPOSE 8000
