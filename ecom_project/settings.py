@@ -13,6 +13,11 @@ import os
 import datetime
 from pathlib import Path
 from dotenv import load_dotenv
+import os
+
+LOG_FILE = os.getenv("LOG_FILE", "/logs/django.log")
+
+os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -184,7 +189,7 @@ LOGGING = {
         "file": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": os.getenv("LOG_FILE", "/logs/django.log"),
+            "filename": LOG_FILE,
             "formatter": "verbose",
         },
     },
