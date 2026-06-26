@@ -3,9 +3,8 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "nithin058/django-ecommerce"
-        DOCKER_TAG = "${env.BUILD_NUMBER}"
-        AWS_REGION = 'us-east-1'
-        ECR_REPO = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/django-ecommerce"
+        DOCKER_TAG   = "${env.BUILD_NUMBER}"
+        AWS_REGION   = "us-east-1"
     }
 
     stages {
@@ -29,7 +28,8 @@ pipeline {
         stage('Run Tests in Container') {
             steps {
                 sh '''
-                    docker run --rm $DOCKER_IMAGE:$DOCKER_TAG \
+                    docker run --rm \
+                    $DOCKER_IMAGE:$DOCKER_TAG \
                     python manage.py test
                 '''
             }
@@ -44,6 +44,7 @@ pipeline {
                         passwordVariable: 'DOCKER_PASS'
                     )
                 ]) {
+
                     sh '''
                         echo "$DOCKER_PASS" | docker login \
                         -u "$DOCKER_USER" \
@@ -59,7 +60,6 @@ pipeline {
         }
 
         stage('Push to AWS ECR') {
-
             steps {
 
                 withCredentials([
@@ -68,28 +68,37 @@ pipeline {
                 ]) {
 
                     sh '''
+                        set -e
+
+                        AWS_ACCOUNT_ID=$(aws sts get-caller-identity \
+                            --query Account \
+                            --output text)
+
+                        ECR_REPO="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/django-ecommerce"
+
+                        echo "AWS Account ID: $AWS_ACCOUNT_ID"
+                        echo "ECR Repository: $ECR_REPO"
 
                         aws ecr get-login-password \
-                        --region $AWS_REGION \
-                        | docker login \
-                        --username AWS \
-                        --password-stdin \
-                        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+                            --region "$AWS_REGION" | \
+                        docker login \
+                            --username AWS \
+                            --password-stdin \
+                            "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
 
                         docker tag \
-                        $DOCKER_IMAGE:$DOCKER_TAG \
-                        $ECR_REPO:$DOCKER_TAG
+                            "$DOCKER_IMAGE:$DOCKER_TAG" \
+                            "$ECR_REPO:$DOCKER_TAG"
 
                         docker tag \
-                        $DOCKER_IMAGE:latest \
-                        $ECR_REPO:latest
+                            "$DOCKER_IMAGE:latest" \
+                            "$ECR_REPO:latest"
 
-                        docker push $ECR_REPO:$DOCKER_TAG
-
-                        docker push $ECR_REPO:latest
+                        docker push "$ECR_REPO:$DOCKER_TAG"
+                        docker push "$ECR_REPO:latest"
 
                         docker logout \
-                        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+                            "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
                     '''
                 }
             }
@@ -97,6 +106,7 @@ pipeline {
     }
 
     post {
+
         always {
             echo 'Pipeline completed'
         }
