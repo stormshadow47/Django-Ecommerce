@@ -74,7 +74,7 @@ pipeline {
                             --query Account \
                             --output text)
 
-                        ECR_REPO="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/django-ecommerce"
+                        ECR_REPO="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/project/django-ecommerce"
 
                         echo "AWS Account ID: $AWS_ACCOUNT_ID"
                         echo "ECR Repository: $ECR_REPO"
