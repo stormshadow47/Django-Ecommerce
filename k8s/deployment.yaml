@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-ecommerce
+  labels:
+    app: django-ecommerce
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: django-ecommerce
+  template:
+    metadata:
+      labels:
+        app: django-ecommerce
+    spec:
+      containers:
+      - name: django-app
+        image: nithin058/django-ecommerce:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - secretRef:
+            name: django-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5

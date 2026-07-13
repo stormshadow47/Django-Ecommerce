@@ -103,6 +103,35 @@ pipeline {
                 }
             }
         }
+
+        // stage('Deploy to EKS') {
+        //     steps {
+        //         withCredentials([
+        //             [$class: 'AmazonWebServicesCredentialsBinding',
+        //              credentialsId: 'aws-credentials']
+        //         ]) {
+
+        //             sh '''
+        //                 set -e
+
+        //                 # Update kubeconfig for EKS
+        //                 aws eks update-kubeconfig \
+        //                     --region "$AWS_REGION" \
+        //                     --name django-ecommerce-cluster
+
+        //                 # Update deployment with new image
+        //                 kubectl set image deployment/django-ecommerce \
+        //                     django-app="$DOCKER_IMAGE:$DOCKER_TAG" \
+        //                     --namespace=default
+
+        //                 # Wait for rollout to complete
+        //                 kubectl rollout status deployment/django-ecommerce \
+        //                     --namespace=default \
+        //                     --timeout=5m
+        //             '''
+        //         }
+        //     }
+        // }
     }
 
     post {

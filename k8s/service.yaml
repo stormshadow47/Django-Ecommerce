@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-ecommerce-service
+  labels:
+    app: django-ecommerce
+spec:
+  type: LoadBalancer
+  selector:
+    app: django-ecommerce
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
