@@ -18,11 +18,11 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import password_validation
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-@csrf_exempt
 def register_user(request):
     # Handle both JSON and form-encoded data
     if request.content_type == 'application/json':
@@ -165,9 +165,13 @@ def set_new_password(request, uidb64, token):
         return JsonResponse({'error': 'Invalid user'}, status=400)
 
     if user and default_token_generator.check_token(user, token):
-        user.set_password(new_password)
-        user.save()
-        return JsonResponse({'message': 'Password updated successfully'}, status=200)
+        try:
+            password_validation.validate_password(new_password, user=user)
+            user.set_password(new_password)
+            user.save()
+            return JsonResponse({'message': 'Password updated successfully'}, status=200)
+        except ValidationError as e:
+            return JsonResponse({'error': str(e)}, status=400)
     else:
         return JsonResponse({'error': 'Invalid token'}, status=400)
     
@@ -220,23 +224,19 @@ from django.utils.html import strip_tags
 @authentication_classes([UserProfileAuthBackend, SessionAuthentication])
 def send_custom_email(request):
     subject = request.data.get('subject')
-    html_message = request.data.get('html_message')
+    message = request.data.get('message')
     recipient_list_str = request.data.get('recipient_list', '')  # String of recipients
 
-    if subject and html_message and recipient_list_str:
+    if subject and message and recipient_list_str:
         recipient_list = recipient_list_str.split(',')  # Convert string to list of recipients
-
-        # Generate a plain text version from HTML
-        plain_text_message = strip_tags(html_message)
 
         send_mail(
             subject,
-            plain_text_message,
+            message,
             'nithin.raj101@outlook.com',  
             recipient_list,
-            html_message=html_message,
             fail_silently=True,
         )
         return Response({'success': 'Email sent successfully'})
     else:
-        return Response({'error': 'Please provide subject, html_message, and recipient_list'}, status=400)
+        return Response({'error': 'Please provide subject, message, and recipient_list'}, status=400)
