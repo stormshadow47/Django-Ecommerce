@@ -4,6 +4,9 @@ mailtrap.env
 __pycache__
 .env
 db.sqlite3
+coverage.xml
+htmlcov/
+.coverage
 
 # Terraform
 terraform/.terraform/
