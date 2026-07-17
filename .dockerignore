@@ -1,0 +1,34 @@
+# Secrets and local configuration
+.env
+.env.*
+*.env
+mailtrap.env
+k8s/secret.yaml
+
+# Version control and CI
+.git
+.gitignore
+.github
+
+# Local development artifacts
+venv/
+ecom/
+__pycache__/
+*.py[cod]
+*$py.class
+db.sqlite3
+*.sqlite3
+
+# Infrastructure and deployment configs (not needed at runtime)
+k8s/
+terraform/
+argocd/
+docker-compose.yml
+jenkinsfile
+dockerfile
+.dockerignore
+
+# Documentation and tooling
+README.md
+smoke_tests.py
+sonar-project.properties

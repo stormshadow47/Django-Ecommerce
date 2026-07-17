@@ -23,8 +23,14 @@ WORKDIR /app
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
-COPY . .
+# Copy only application source needed at runtime (secrets excluded via .dockerignore)
+COPY manage.py /app/
+COPY ecom_project/ /app/ecom_project/
+COPY Users/ /app/Users/
+COPY Products/ /app/Products/
+COPY cart/ /app/cart/
+COPY orders/ /app/orders/
+COPY templates/ /app/templates/
 
 # Create logs directory and set permissions
 RUN mkdir -p /app/logs && chown -R appuser:appuser /app
