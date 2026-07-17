@@ -14,15 +14,28 @@ spec:
       labels:
         app: django-ecommerce
     spec:
+      serviceAccountName: django-ecommerce-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
       containers:
       - name: django-app
-        image: nithin058/django-ecommerce:latest
+        image: ghcr.io/nithin058/django-ecommerce:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
         envFrom:
         - secretRef:
             name: django-secrets
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
         resources:
           requests:
             memory: "256Mi"
@@ -42,3 +55,13 @@ spec:
             port: 8000
           initialDelaySeconds: 5
           periodSeconds: 5
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: logs
+        emptyDir: {}
