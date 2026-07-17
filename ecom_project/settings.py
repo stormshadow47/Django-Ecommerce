@@ -13,6 +13,7 @@ import os
 import datetime
 from pathlib import Path
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 import os
 
 LOG_FILE = os.getenv("LOG_FILE", "/logs/django.log")
@@ -41,7 +42,12 @@ DEFAULT_FROM_EMAIL = 'nithin.raj101@outlook.com'
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a1g$(glsz@8x)pffrp4e-i&r*l#ni!jb^2_2w@1jalhq_wc6-('
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    raise ImproperlyConfigured(
+        'The SECRET_KEY environment variable must be set. '
+        'Copy .env.example to .env and generate a new key.'
+    )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
