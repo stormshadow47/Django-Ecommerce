@@ -25,12 +25,8 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
         if not self.user:
             raise ValueError("User must be set before saving the Order.")
-        
-        if not self.pk: 
-            super().save(*args, **kwargs)  
-            
-        else:
-            super().save(*args, **kwargs)
+
+        super().save(*args, **kwargs)
 
     @staticmethod
     def get_order_items(user):
