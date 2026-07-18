@@ -5,7 +5,7 @@ metadata:
   labels:
     app: django-ecommerce
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: django-ecommerce
   ports:
