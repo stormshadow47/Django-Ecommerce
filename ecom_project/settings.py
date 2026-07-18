@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from django.core.exceptions import ImproperlyConfigured
 import os
 
-LOG_FILE = os.getenv("LOG_FILE", "/logs/django.log")
+LOG_FILE = os.getenv("LOG_FILE", "/app/logs/django.log")
 
 os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 
@@ -130,10 +130,15 @@ WSGI_APPLICATION = 'ecom_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+DATABASE_NAME = os.getenv(
+    'DATABASE_NAME',
+    os.fspath(BASE_DIR / 'db.sqlite3')
+)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': DATABASE_NAME,
     }
 }
 

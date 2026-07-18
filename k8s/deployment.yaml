@@ -5,7 +5,7 @@ metadata:
   labels:
     app: django-ecommerce
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: django-ecommerce
@@ -21,11 +21,13 @@ spec:
         fsGroup: 1000
       containers:
       - name: django-app
-        image: ghcr.io/nithin058/django-ecommerce:latest
-        imagePullPolicy: Always
+        image: django-ecommerce:local
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
         envFrom:
+        - configMapRef:
+            name: django-config
         - secretRef:
             name: django-secrets
         securityContext:
@@ -60,8 +62,13 @@ spec:
           mountPath: /tmp
         - name: logs
           mountPath: /app/logs
+        - name: db
+          mountPath: /app/db
       volumes:
       - name: tmp
         emptyDir: {}
       - name: logs
         emptyDir: {}
+      - name: db
+        persistentVolumeClaim:
+          claimName: django-db-pvc

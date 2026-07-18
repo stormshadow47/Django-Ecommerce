@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-config
+data:
+  DATABASE_NAME: /app/db/db.sqlite3
+  LOG_FILE: /app/logs/django.log
