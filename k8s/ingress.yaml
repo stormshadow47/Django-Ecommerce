@@ -8,7 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: django-ecommerce.com
+  - host: django-ecommerce
     http:
       paths:
       - path: /
