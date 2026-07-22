@@ -13,6 +13,9 @@ spec:
     metadata:
       labels:
         app: django-ecommerce
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
     spec:
       serviceAccountName: django-ecommerce-sa
       securityContext:
