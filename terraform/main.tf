@@ -14,18 +14,35 @@ resource "aws_vpc" "eks_vpc" {
   }
 }
 
-# Subnets
-resource "aws_subnet" "eks_subnets" {
-  count                   = length(var.subnet_cidrs)
+# Public subnets contain only internet-facing ALBs and NAT Gateways. The route
+# to the Internet Gateway makes them public; launched workloads still do not
+# receive public IPs automatically.
+resource "aws_subnet" "public" {
+  count                   = length(var.public_subnet_cidrs)
   vpc_id                  = aws_vpc.eks_vpc.id
-  cidr_block              = var.subnet_cidrs[count.index]
+  cidr_block              = var.public_subnet_cidrs[count.index]
   availability_zone       = var.availability_zones[count.index]
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = {
-    Name                                        = "django-ecommerce-subnet-${count.index}"
+    Name                                        = "django-ecommerce-public-${count.index}"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/elb"                    = "1"
+  }
+}
+
+# Worker nodes and Pods run only in private subnets and cannot receive public IPs.
+resource "aws_subnet" "private" {
+  count                   = length(var.private_subnet_cidrs)
+  vpc_id                  = aws_vpc.eks_vpc.id
+  cidr_block              = var.private_subnet_cidrs[count.index]
+  availability_zone       = var.availability_zones[count.index]
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name                                        = "django-ecommerce-private-${count.index}"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"           = "1"
   }
 }
 
@@ -38,8 +55,8 @@ resource "aws_internet_gateway" "eks_igw" {
   }
 }
 
-# Route Table
-resource "aws_route_table" "eks_rt" {
+# The public route table sends ALB and NAT traffic to the Internet Gateway.
+resource "aws_route_table" "public" {
   vpc_id = aws_vpc.eks_vpc.id
 
   route {
@@ -48,16 +65,90 @@ resource "aws_route_table" "eks_rt" {
   }
 
   tags = {
-    Name = "django-ecommerce-rt"
+    Name = "django-ecommerce-public-rt"
   }
 }
 
-# Route Table Association
-resource "aws_route_table_association" "eks_rta" {
-  count          = length(var.subnet_cidrs)
-  subnet_id      = aws_subnet.eks_subnets[count.index].id
-  route_table_id = aws_route_table.eks_rt.id
+resource "aws_route_table_association" "public" {
+  count          = length(var.public_subnet_cidrs)
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
 }
+
+# NAT allows private nodes to pull images and reach AWS APIs without public IPs.
+resource "aws_eip" "nat" {
+  count  = var.single_nat_gateway ? 1 : length(var.public_subnet_cidrs)
+  domain = "vpc"
+
+  tags = {
+    Name = "django-ecommerce-nat-${count.index}"
+  }
+}
+
+resource "aws_nat_gateway" "this" {
+  count         = var.single_nat_gateway ? 1 : length(var.public_subnet_cidrs)
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
+
+  tags = {
+    Name = "django-ecommerce-nat-${count.index}"
+  }
+
+  depends_on = [aws_internet_gateway.eks_igw]
+}
+
+resource "aws_route_table" "private" {
+  count  = var.single_nat_gateway ? 1 : length(var.private_subnet_cidrs)
+  vpc_id = aws_vpc.eks_vpc.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.this[var.single_nat_gateway ? 0 : count.index].id
+  }
+
+  tags = {
+    Name = "django-ecommerce-private-rt-${count.index}"
+  }
+}
+
+resource "aws_route_table_association" "private" {
+  count          = length(var.private_subnet_cidrs)
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private[var.single_nat_gateway ? 0 : count.index].id
+}
+
+resource "aws_kms_key" "eks_secrets" {
+  description             = "Envelope encryption key for Kubernetes Secrets in ${var.cluster_name}"
+  deletion_window_in_days = 30
+  enable_key_rotation     = true
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "AllowRootAccountAdministration"
+        Effect    = "Allow"
+        Principal = { AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root" }
+        Action    = "kms:*"
+        Resource  = "*"
+      },
+      {
+        Sid       = "AllowEKSSecretEncryption"
+        Effect    = "Allow"
+        Principal = { AWS = aws_iam_role.eks_cluster_role.arn }
+        Action    = ["kms:Encrypt", "kms:Decrypt", "kms:ReEncrypt*", "kms:GenerateDataKey*", "kms:DescribeKey"]
+        Resource  = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_kms_alias" "eks_secrets" {
+  name          = "alias/${var.cluster_name}-eks-secrets"
+  target_key_id = aws_kms_key.eks_secrets.key_id
+}
+
+data "aws_caller_identity" "current" {}
 
 # EKS Cluster
 resource "aws_eks_cluster" "eks_cluster" {
@@ -65,11 +156,16 @@ resource "aws_eks_cluster" "eks_cluster" {
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
-    subnet_ids             = aws_subnet.eks_subnets[*].id
-    endpoint_public_access = false
-    private_network_access_config {
-      private_network_access_enabled = true
+    subnet_ids              = concat(aws_subnet.public[*].id, aws_subnet.private[*].id)
+    endpoint_public_access  = false
+    endpoint_private_access = true
+  }
+
+  encryption_config {
+    provider {
+      key_arn = aws_kms_key.eks_secrets.arn
     }
+    resources = ["secrets"]
   }
 
   depends_on = [
@@ -82,7 +178,7 @@ resource "aws_eks_node_group" "eks_node_group" {
   cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = "django-ecommerce-node-group"
   node_role_arn   = aws_iam_role.eks_node_role.arn
-  subnet_ids      = aws_subnet.eks_subnets[*].id
+  subnet_ids      = aws_subnet.private[*].id
 
   scaling_config {
     desired_size = 2
