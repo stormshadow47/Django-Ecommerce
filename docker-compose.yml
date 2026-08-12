@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: dockerfile
     image: nithin058/django-ecommerce:latest
     container_name: django_app
     command: gunicorn ecom_project.wsgi:application --bind 0.0.0.0:8000

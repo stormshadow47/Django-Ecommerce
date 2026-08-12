@@ -9,6 +9,7 @@ spec:
   selector:
     app: django-ecommerce
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 80
     targetPort: 8000

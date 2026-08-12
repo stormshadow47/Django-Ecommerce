@@ -3,6 +3,7 @@ mailtrap.env
 /venv
 __pycache__
 .env
+.env.secrets
 db.sqlite3
 coverage.xml
 htmlcov/

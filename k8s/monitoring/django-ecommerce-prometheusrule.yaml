@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: django-ecommerce
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: django-ecommerce
+      rules:
+        - alert: DjangoEcommerceTargetDown
+          expr: up{job=~".*django-ecommerce.*"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Django Ecommerce is unreachable
+            description: Prometheus has been unable to scrape {{ $labels.instance }} for five minutes.
+        - alert: DjangoEcommerceHigh5xxRate
+          expr: sum(rate(django_http_responses_total_by_status_total{job=~".*django-ecommerce.*",status=~"5.."}[5m])) / sum(rate(django_http_responses_total_by_status_total{job=~".*django-ecommerce.*"}[5m])) > 0.05
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: Django Ecommerce has a high 5xx rate
+            description: More than 5% of responses have been 5xx for ten minutes.

@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-ecommerce-dashboard
+  labels:
+    grafana_dashboard: "1"
+data:
+  django-ecommerce.json: |
+    {
+      "annotations": {"list": []},
+      "editable": true,
+      "panels": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []},
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+          "id": 1,
+          "targets": [{"expr": "sum(rate(django_http_requests_total_by_method_total{job=~\".*django-ecommerce.*\"}[5m]))", "legendFormat": "requests/s", "refId": "A"}],
+          "title": "Request rate", "type": "timeseries"
+        },
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "fieldConfig": {"defaults": {"unit": "percentunit"}, "overrides": []},
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+          "id": 2,
+          "targets": [{"expr": "sum(rate(django_http_responses_total_by_status_total{job=~\".*django-ecommerce.*\",status=~\"5..\"}[5m])) / sum(rate(django_http_responses_total_by_status_total{job=~\".*django-ecommerce.*\"}[5m]))", "legendFormat": "5xx rate", "refId": "A"}],
+          "title": "Server error rate", "type": "timeseries"
+        },
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8},
+          "id": 3,
+          "targets": [{"expr": "histogram_quantile(0.95, sum(rate(django_http_requests_latency_including_middlewares_seconds_bucket{job=~\".*django-ecommerce.*\"}[5m])) by (le))", "legendFormat": "p95", "refId": "A"}],
+          "title": "p95 request latency", "type": "timeseries"
+        }
+      ],
+      "schemaVersion": 39,
+      "tags": ["django", "ecommerce"],
+      "title": "Django Ecommerce",
+      "uid": "django-ecommerce"
+    }

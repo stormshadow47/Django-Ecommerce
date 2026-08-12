@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: django-ecommerce
+  labels:
+    app: django-ecommerce
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: django-ecommerce
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
