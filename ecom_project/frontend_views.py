@@ -95,3 +95,6 @@ def order_confirmation(request, order_id):
         return render(request, 'order_confirmation.html', {'order': order, 'order_items': order_items})
     except Order.DoesNotExist:
         return redirect('/products/')
+
+def health(request):
+    return JsonResponse({"status": "ok"})

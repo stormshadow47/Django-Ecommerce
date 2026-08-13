@@ -20,6 +20,7 @@ from ecom_project import frontend_views
 
 urlpatterns = [
     path('', include('django_prometheus.urls')),
+    path('health/', frontend_views.health),
     path('admin/', admin.site.urls),
     path('', frontend_views.home, name='home'),
     path('products/', frontend_views.products_list, name='products'),
