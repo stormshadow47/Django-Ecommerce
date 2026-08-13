@@ -1,0 +1,10 @@
+title = "Django Ecommerce Gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Encrypted SealedSecret manifests are safe to commit; only the cluster controller can decrypt them."
+paths = [
+  '''(?i).*\.sealed\.yaml$''',
+]

@@ -1,22 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Requires kubectl access to the target cluster, kubeseal, and .env.secrets.
-# The result is safe to commit because it can only be decrypted by this cluster's controller.
-if [[ ! -f .env.secrets ]]; then
-  echo ".env.secrets is missing; copy env.secrets.example and fill it locally." >&2
-  exit 1
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+ENV_FILE="$PROJECT_ROOT/.env.secrets"
+OUTPUT_FILE="$PROJECT_ROOT/k8s/django-secrets.sealed.yaml"
+
+if [[ ! -f "$ENV_FILE" ]]; then
+    echo ".env.secrets is missing; copy .env.secrets.example and fill it locally."
+    exit 1
 fi
+
+mkdir -p "$PROJECT_ROOT/k8s"
 
 kubectl create secret generic django-secrets \
   --namespace default \
-  --from-env-file=.env.secrets \
+  --from-env-file="$ENV_FILE" \
   --dry-run=client \
-  --output yaml \
-  | kubeseal \
-      --controller-name sealed-secrets-controller \
-      --controller-namespace kube-system \
-      --format yaml \
-  > k8s/django-secrets.sealed.yaml
+  --output yaml |
+kubeseal \
+  --controller-name sealed-secrets\
+  --controller-namespace kube-system \
+  --format yaml \
+  > "$OUTPUT_FILE"
 
-echo "Wrote k8s/django-secrets.sealed.yaml. Review and commit that file; never commit .env.secrets."
+echo "Wrote $OUTPUT_FILE. Review and commit that file; never commit .env.secrets."
