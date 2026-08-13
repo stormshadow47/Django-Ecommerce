@@ -2,23 +2,17 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: django-ecommerce-ingress
-  labels:
-    app: django-ecommerce
-  annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-    alb.ingress.kubernetes.io/healthcheck-path: /
+  namespace: default
 spec:
-  ingressClassName: alb
+  ingressClassName: nginx
   rules:
-  - host: django-ecommerce.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: django-ecommerce-service
-            port:
-              number: 80
+    - host: django-ecommerce.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: django-ecommerce-service
+                port:
+                  number: 80
